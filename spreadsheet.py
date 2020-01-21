@@ -1,4 +1,4 @@
-import operator 
+import operator as OP
 
 class Spread:
   def __init__(self, rc, isZeroed=False):
@@ -90,40 +90,40 @@ class Spread:
     return g
 
 # Bounded Generalized Monad
-  # Made more general by passing in operator
-  def bind_op_two(self, op, rc1, rc2):
+  # Made more general by passing in OP
+  def bind_op_two(self, op1, rc1, rc2):
     def g():
-      return op(self.select(rc1).eval(), self.select(rc2).eval())
+      return op1(self.select(rc1).eval(), self.select(rc2).eval())
     return g
   
 
 # Unbounded Monads
-  def OP(self, op, rc1, rc2, *rcs):
+  def op(self, op1, rc1, rc2, *rcs):
     def g():
-      return op(self.select(rc1).eval(), self.select(rc2).eval())
+      return op1(self.select(rc1).eval(), self.select(rc2).eval())
     f = g
     for rc in rcs:
-      f = self._bind_op_select(op, f, rc)
+      f = self._bind_op_select(op1, f, rc)
     return f
 
-  def _bind_op_select(self, op, f, rc):
+  def _bind_op_select(self, op1, f, rc):
     def g():
-      return op(f(), self.select(rc).eval())
+      return op1(f(), self.select(rc).eval())
     return g
 
   # op is the operation between two functions
   # fopf is zero or many tuples containing (operator, function)
-  def bind_f(self, f1, op, f2, *opfs):
+  def bind_f(self, f1, op1, f2, *opfs):
     def g():
-      return op(f1(), f2())
+      return op1(f1(), f2())
     f = g
-    for (oper_, f_) in opfs:
-      f = self.bind_f_helper(f, oper_, f_)
+    for (op_, f_) in opfs:
+      f = self.bind_f_helper(f, op_, f_)
     return f
 
-  def bind_f_helper(self, f1, op, f2):
+  def bind_f_helper(self, f1, op1, f2):
     def g():
-      return op(f1(), f2())
+      return op1(f1(), f2())
     return g
   
 class Cell:
@@ -147,7 +147,7 @@ print("BOUNDED TWO CELL CALCULATION (Add)")
 spr = Spread((1,6), True)
 spr.update((0,0), Cell(Return(5)))
 spr.update((0,1), Cell(Return(10)))
-sum_fn = spr.bind_op_two(operator.add, (0,0), (0,1))
+sum_fn = spr.bind_op_two(OP.add, (0,0), (0,1))
 spr.update((0,5), Cell(sum_fn))
 spr.pp()
 print("")
@@ -158,7 +158,7 @@ spr2.update((0,0), Cell(Return(5)))
 spr2.update((0,1), Cell(Return(5)))
 spr2.update((0,2), Cell(Return(5)))
 spr2.update((0,3), Cell(Return(5)))
-spr2.update((0,5), Cell(spr2.OP(operator.add, (0,0), (0,1), (0,2), (0,3))))
+spr2.update((0,5), Cell(spr2.op(OP.add, (0,0), (0,1), (0,2), (0,3))))
 spr2.pp()
 print("")
 
@@ -174,9 +174,9 @@ spr3.update((2,0), Cell(Return(2)))
 spr3.update((2,1), Cell(Return(2)))
 spr3.update((2,2), Cell(Return(2)))
 
-spr3.update((0,4), Cell(spr3.OP(operator.mul, (0,0), (0,1), (0,2))))
-spr3.update((1,4), Cell(spr3.OP(operator.sub, (1,0), (1,1), (1,2))))
-spr3.update((2,4), Cell(spr3.OP(operator.pow, (2,0), (2,1), (2,2))))
+spr3.update((0,4), Cell(spr3.op(OP.mul, (0,0), (0,1), (0,2))))
+spr3.update((1,4), Cell(spr3.op(OP.sub, (1,0), (1,1), (1,2))))
+spr3.update((2,4), Cell(spr3.op(OP.pow, (2,0), (2,1), (2,2))))
 spr3.pp()
 print("")
 
@@ -195,13 +195,13 @@ spr4.update((2,1), Cell(Return(2)))
 spr4.update((2,2), Cell(Return(2)))
 spr4.update((3,4), Cell(
   spr4.bind_f(
-    spr4.OP(operator.mul, (0,0), (0,1), (0,2)),
-    operator.add,
-    spr4.OP(operator.sub, (1,0), (1,1), (1,2)),
-    (operator.mul, spr4.OP(operator.pow, (2,0), (2,1), (2,2)))
+    spr4.op(OP.mul, (0,0), (0,1), (0,2)),
+    OP.add,
+    spr4.op(OP.sub, (1,0), (1,1), (1,2)),
+    (OP.mul, spr4.op(OP.pow, (2,0), (2,1), (2,2)))
     )
   ))
 
 spr4.pp()
-#spr2.update((2,1), Cell(spr2.OP(operator.add, (0,0), (0,1), (0,2))))
+#spr2.update((2,1), Cell(spr2.op(OP.add, (0,0), (0,1), (0,2))))
 #spr2.pp()

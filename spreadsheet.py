@@ -140,10 +140,10 @@ def Zero():
     return 0
   return g
 
-print("-----------------------------------------")
-print("==== Functions As Data, Cell Example ====")
-print("-----------------------------------------\n")
-print("TWO CELL CALCULATION (Add)")
+print("-------------------------------------------")
+print("==== Functions As Data, Spreadsheet Ex ====")
+print("-------------------------------------------\n")
+print("BOUNDED TWO CELL CALCULATION (Add)")
 spr = Spread((1,6), True)
 spr.update((0,0), Cell(Return(5)))
 spr.update((0,1), Cell(Return(10)))
@@ -162,7 +162,7 @@ spr2.update((0,5), Cell(spr2.OP(operator.add, (0,0), (0,1), (0,2), (0,3))))
 spr2.pp()
 print("")
 
-print("UNBOUNDED GENERIC CALCULATIONS (Mul), (Sub)")
+print("UNBOUNDED GENERIC CALCULATIONS (Mul), (Sub), (Pow)")
 spr3 = Spread((4,5), True)
 spr3.update((0,0), Cell(Return(5)))
 spr3.update((0,1), Cell(Return(5)))
@@ -170,15 +170,19 @@ spr3.update((0,2), Cell(Return(5)))
 spr3.update((1,0), Cell(Return(15)))
 spr3.update((1,1), Cell(Return(5)))
 spr3.update((1,2), Cell(Return(5)))
+spr3.update((2,0), Cell(Return(2)))
+spr3.update((2,1), Cell(Return(2)))
+spr3.update((2,2), Cell(Return(2)))
 
 spr3.update((0,4), Cell(spr3.OP(operator.mul, (0,0), (0,1), (0,2))))
 spr3.update((1,4), Cell(spr3.OP(operator.sub, (1,0), (1,1), (1,2))))
+spr3.update((2,4), Cell(spr3.OP(operator.pow, (2,0), (2,1), (2,2))))
 spr3.pp()
 print("")
 
-print("UNBOUNDED FUNCTIONS GENERICLY BINDED TOGETHER")
-print("( f0(Mul) (Add) f1(Sub) ) (Mul) f2(Add)")
-print("ie. 125   +      5      *      6")
+print("UNBOUNDED FUNCTIONS BINDED TOGETHER WITH GENERIC OPERATORS")
+print("( f0(Mul) (Add) f1(Sub) ) (Mul) f2(Pow)")
+print("ie. 125     +      5        *     16")
 spr4 = Spread((4,5), True)
 spr4.update((0,0), Cell(Return(5)))
 spr4.update((0,1), Cell(Return(5)))
@@ -194,7 +198,7 @@ spr4.update((3,4), Cell(
     spr4.OP(operator.mul, (0,0), (0,1), (0,2)),
     operator.add,
     spr4.OP(operator.sub, (1,0), (1,1), (1,2)),
-    (operator.mul, spr4.OP(operator.add, (2,0), (2,1), (2,2)))
+    (operator.mul, spr4.OP(operator.pow, (2,0), (2,1), (2,2)))
     )
   ))
 

@@ -193,8 +193,8 @@ spr.update((3,3), Cell(Return(5)))
 
 add_cells_op0 = op(OP.add, [(0,0), (0,1), (0,2), (0,3)])
 sub_cells_op1 = op(OP.sub, [(1,0), (1,1), (1,2), (1,3)])
-add_cells_op2 = op(OP.add, [(0,0), (0,1), (0,2), (0,3)])
-add_cells_op3 = op(OP.add, [(1,0), (1,1), (1,2), (1,3)])
+add_cells_op2 = op(OP.add, [(2,0), (2,1), (2,2), (2,3)])
+add_cells_op3 = op(OP.add, [(3,0), (3,1), (3,2), (3,3)])
 
 calc01 = opf(OP.add, [add_cells_op0, sub_cells_op1])
 calc02 = opf(OP.add, [add_cells_op2, add_cells_op3])
@@ -202,7 +202,7 @@ calc02 = opf(OP.add, [add_cells_op2, add_cells_op3])
 totalCalc = opf(OP.add, [calc01, calc02])
 
 spr.update((0, 5), FCell(spr, add_cells_op0))
-spr.update((1, 5), FCell(spr, sub_cells_op))
+spr.update((1, 5), FCell(spr, sub_cells_op1))
 spr.update((2, 5), FCell(spr, add_cells_op2))
 spr.update((3, 5), FCell(spr, add_cells_op3))
 
